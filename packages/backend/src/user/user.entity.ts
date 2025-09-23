@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Post } from 'src/post/post.entity';
 import {
   Entity,
@@ -5,7 +7,9 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
+  BeforeInsert,
 } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Entity('users')
 export class User {
@@ -23,4 +27,16 @@ export class User {
 
   @OneToMany(() => Post, (p) => p.user)
   posts: Post[];
+
+  @BeforeInsert()
+  async hashPassword() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const salt = await bcrypt.genSalt();
+    this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
+  }
+
+  async comparePassword(plain: string): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return await bcrypt.compare(plain, this.passwordHash);
+  }
 }
