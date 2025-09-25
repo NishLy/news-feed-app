@@ -22,8 +22,8 @@ export class User {
   @Column()
   passwordHash: string;
 
-  @Column()
-  refreshToken: string | null;
+  @Column({ nullable: true })
+  refreshToken?: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

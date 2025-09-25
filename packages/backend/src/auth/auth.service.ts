@@ -16,7 +16,7 @@ export class AuthService {
   ) {}
 
   validate(data: AuthLoginDto): Promise<User | null> {
-    return this.usersService.validateUser(data.password, data.password);
+    return this.usersService.validateUser(data.username, data.password);
   }
 
   login(user: User) {

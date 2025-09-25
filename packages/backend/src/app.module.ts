@@ -7,11 +7,16 @@ import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 import { FollowModule } from './follow/follow.module';
 import { AuthModule } from './auth/auth.module';
+import { join } from 'path';
+import { User } from './user/user.entity';
+import { Post } from './post/post.entity';
+import { Follow } from './follow/follow.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: join(__dirname, '..', '.env'),
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -23,7 +28,7 @@ import { AuthModule } from './auth/auth.module';
         username: config.get<string>('DB_USER'),
         password: config.get<string>('DB_PASS'),
         database: config.get<string>('DB_NAME'),
-        // entities: [User],
+        entities: [User, Post, Follow],
         synchronize: true,
       }),
     }),

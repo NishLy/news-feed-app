@@ -43,7 +43,7 @@ export class UserService {
   async removeRefreshToken(userId: number) {
     const user = await this.findById(userId);
     if (user) {
-      user.refreshToken = null;
+      user.refreshToken = undefined;
       await this.usersRepo.save(user);
     }
   }
