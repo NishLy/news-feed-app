@@ -6,6 +6,7 @@ import { User } from 'src/user/user.entity';
 import { AuthPayload } from './types/jwt';
 import { CreateUserDTO } from 'src/user/dto/user.dto.create';
 import { ConfigService } from '@nestjs/config';
+import { AuthTokensDto } from './dto/auth.dto.tokens';
 
 @Injectable()
 export class AuthService {
@@ -27,10 +28,10 @@ export class AuthService {
     return this.usersService.create(data);
   }
 
-  async getTokens(user: User) {
+  async getTokens(user: User): Promise<AuthTokensDto> {
     const payload: AuthPayload = { id: user.id, username: user.username };
 
-    const accessToken = await this.jwtService.signAsync(payload, {
+    const token = await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('JWT_SECRET') ?? 'secret',
       expiresIn: '15m',
     });
@@ -42,7 +43,7 @@ export class AuthService {
 
     await this.usersService.setRefreshToken(user.id, refreshToken);
 
-    return { accessToken, refreshToken };
+    return { token, refreshToken };
   }
 
   async refreshTokens(userId: number, refreshToken: string) {

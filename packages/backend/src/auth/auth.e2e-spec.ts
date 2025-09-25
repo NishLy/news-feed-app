@@ -65,8 +65,8 @@ describe('Auth flow (e2e)', () => {
       .send(fakeUser)
       .expect(201);
 
-    const { accessToken, refreshToken: rt } = res.body as AuthTokensDto;
-    expect(accessToken).toBeDefined();
+    const { token, refreshToken: rt } = res.body as AuthTokensDto;
+    expect(token).toBeDefined();
     expect(rt).toBeDefined();
 
     refreshToken = rt;
@@ -86,7 +86,7 @@ describe('Auth flow (e2e)', () => {
       .expect(201);
 
     const body = res.body as AuthTokensDto;
-    expect(body.accessToken).toBeDefined();
+    expect(body.token).toBeDefined();
     expect(body.refreshToken).toBeDefined();
   });
 
