@@ -6,9 +6,9 @@ import { AppModule } from 'src/app.module';
 import { CreateUserDTO } from 'src/user/dto/user.dto.create';
 import { CustomExceptionFilter } from 'src/common/exception.filter';
 import { AuthTokensDto } from 'src/auth/dto/auth.dto.tokens';
-import { Post } from './post.entity';
+import { Post } from 'src/post/post.entity';
 
-describe('Post flow (e2e)', () => {
+describe('Feed flow (e2e)', () => {
   let app: INestApplication;
   let token: string;
   const fakeUser: CreateUserDTO = {
@@ -46,28 +46,21 @@ describe('Post flow (e2e)', () => {
     token = tk;
   });
 
-  it('should succefully post "Post"', async () => {
-    const text: string = 'Hello world';
+  it('should seed feeds', async () => {
     const res = await request(app.getHttpServer())
-      .post('/api/posts')
+      .get(`/api/feed?page=${1}&limit=${5}`)
       .set('Authorization', 'Bearer ' + token)
-      .send({ content: text })
-      .expect(201);
+      .expect(200);
 
-    const post = res.body as Post;
+    const { posts, page } = res.body as {
+      posts: Post[];
+      total: number;
+      page: number;
+      lastPage: number;
+    };
 
-    expect(post).toBeDefined();
-    expect(post.id).toBeDefined();
-    expect(post.content).toBe(text);
-    expect(post.createdAt).toBeDefined();
-  });
-
-  it('should reject "Post" that have content length more than 200', async () => {
-    const text: string = 'Hello world '.repeat(20);
-    await request(app.getHttpServer())
-      .post('/api/posts')
-      .set('Authorization', 'Bearer ' + token)
-      .send({ content: text })
-      .expect(400);
+    expect(posts).toBeDefined();
+    expect(posts.length).toBeGreaterThan(0);
+    expect(page).toBe(1);
   });
 });

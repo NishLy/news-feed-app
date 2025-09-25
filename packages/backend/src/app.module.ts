@@ -11,6 +11,7 @@ import { join } from 'path';
 import { User } from './user/user.entity';
 import { Post } from './post/post.entity';
 import { Follow } from './follow/follow.entity';
+import { FeedModule } from './feed/feed.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { Follow } from './follow/follow.entity';
     PostModule,
     FollowModule,
     AuthModule,
+    FeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

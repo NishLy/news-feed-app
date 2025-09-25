@@ -20,4 +20,19 @@ export class PostService {
   findById(id: number) {
     return this.postsRepo.findOne({ where: { id } });
   }
+
+  async getPosts(page = 1, limit = 10) {
+    const [posts, total] = await this.postsRepo.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
+
+    return {
+      posts,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    };
+  }
 }
