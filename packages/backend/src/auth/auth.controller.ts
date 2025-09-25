@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   UnauthorizedException,
+  HttpCode,
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
@@ -16,6 +17,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @HttpCode(200)
   async login(@Body() data: AuthLoginDto) {
     const user = await this.authService.validate(data);
     if (!user) throw new UnauthorizedException('Invalid credentials');
@@ -28,6 +30,7 @@ export class AuthController {
   }
 
   @Post('refreshToken')
+  @HttpCode(200)
   async refresh(@Body() data: RefreshTokenDto) {
     return this.authService.refreshTokens(data.id, data.refreshToken);
   }
