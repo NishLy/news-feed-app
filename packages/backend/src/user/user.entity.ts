@@ -33,9 +33,7 @@ export class User {
 
   @BeforeInsert()
   async hashPassword() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const salt = await bcrypt.genSalt();
-    this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
+    this.passwordHash = await bcrypt.hash(this.passwordHash, 10);
   }
 
   async comparePassword(plain: string): Promise<boolean> {

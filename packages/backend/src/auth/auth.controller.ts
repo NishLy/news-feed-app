@@ -3,7 +3,7 @@ import {
   Request,
   Post,
   Body,
-  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
@@ -18,7 +18,7 @@ export class AuthController {
   @Post('login')
   async login(@Body() data: AuthLoginDto) {
     const user = await this.authService.validate(data);
-    if (!user) throw new NotFoundException();
+    if (!user) throw new UnauthorizedException('Invalid credentials');
     return this.authService.login(user);
   }
 

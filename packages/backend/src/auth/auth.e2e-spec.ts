@@ -1,13 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from 'src/app.module';
 import { AuthTokensDto } from './dto/auth.dto.tokens';
 import { CreateUserDTO } from 'src/user/dto/user.dto.create';
 import { User } from 'src/user/user.entity';
+import { CustomExceptionFilter } from 'src/common/exception.filter';
 
 describe('Auth flow (e2e)', () => {
   let app: INestApplication;
+  let createdUser: User;
+  let refreshToken: string;
   const fakeUser: CreateUserDTO = {
     username: 'admin' + Math.floor(Math.random() * 10000),
     password: 'password123',
@@ -19,39 +23,69 @@ describe('Auth flow (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalFilters(new CustomExceptionFilter());
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
     await app.init();
   });
 
-  it('should login and refresh token', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const createRes = await request(app.getHttpServer())
+  it('should register a user', async () => {
+    const res = await request(app.getHttpServer())
       .post('/api/register')
       .send(fakeUser)
       .expect(201);
 
-    const createdUser = createRes.body as User;
+    createdUser = res.body as User;
     expect(createdUser.id).toBeDefined();
     expect(createdUser.username).toBe(fakeUser.username);
+  });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const loginRes = await request(app.getHttpServer())
+  it('should reject register wrong data', async () => {
+    await request(app.getHttpServer())
+      .post('/api/register')
+      .send({ username: '' })
+      .expect(400);
+  });
+
+  it('should reject duplicate registration', async () => {
+    await request(app.getHttpServer())
+      .post('/api/register')
+      .send(fakeUser)
+      .expect(409);
+  });
+
+  it('should login and return tokens', async () => {
+    const res = await request(app.getHttpServer())
       .post('/api/login')
       .send(fakeUser)
       .expect(201);
 
-    const { accessToken, refreshToken } = loginRes.body as AuthTokensDto;
-
+    const { accessToken, refreshToken: rt } = res.body as AuthTokensDto;
     expect(accessToken).toBeDefined();
-    expect(refreshToken).toBeDefined();
+    expect(rt).toBeDefined();
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const refreshRes = await request(app.getHttpServer())
+    refreshToken = rt;
+  });
+
+  it('should reject invalid cred', async () => {
+    await request(app.getHttpServer())
+      .post('/api/login')
+      .send({ username: fakeUser.username, password: 'wrong123123' })
+      .expect(401);
+  });
+
+  it('should refresh tokens with valid refresh token', async () => {
+    const res = await request(app.getHttpServer())
       .post('/api/refreshToken')
       .send({ id: createdUser.id, refreshToken })
       .expect(201);
 
-    const body = refreshRes.body as AuthTokensDto;
-
+    const body = res.body as AuthTokensDto;
     expect(body.accessToken).toBeDefined();
     expect(body.refreshToken).toBeDefined();
   });
