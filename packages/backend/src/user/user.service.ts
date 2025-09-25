@@ -31,4 +31,25 @@ export class UserService {
     }
     return null;
   }
+
+  async setRefreshToken(userId: number, refreshToken: string) {
+    const user = await this.findById(userId);
+    if (user) {
+      user.refreshToken = refreshToken;
+      await this.usersRepo.save(user);
+    }
+  }
+
+  async removeRefreshToken(userId: number) {
+    const user = await this.findById(userId);
+    if (user) {
+      user.refreshToken = null;
+      await this.usersRepo.save(user);
+    }
+  }
+
+  async getRefreshToken(userId: number): Promise<string | null> {
+    const user = await this.findById(userId);
+    return user?.refreshToken ?? null;
+  }
 }

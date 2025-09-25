@@ -9,6 +9,7 @@ import {
 import { AuthService } from './auth.service';
 import { AuthLoginDto } from './dto/auth.dto.login';
 import { CreateUserDTO } from 'src/user/dto/user.dto.create';
+import { RefreshTokenDto } from './dto/auth.dto.refresh';
 
 @Controller('api')
 export class AuthController {
@@ -24,5 +25,10 @@ export class AuthController {
   @Post('register')
   async register(@Body() data: CreateUserDTO) {
     return this.authService.register(data);
+  }
+
+  @Post('refreshToken')
+  async refresh(@Body() data: RefreshTokenDto) {
+    return this.authService.refreshTokens(data.id, data.refreshToken);
   }
 }

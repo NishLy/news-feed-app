@@ -22,6 +22,9 @@ export class User {
   @Column()
   passwordHash: string;
 
+  @Column()
+  refreshToken: string | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

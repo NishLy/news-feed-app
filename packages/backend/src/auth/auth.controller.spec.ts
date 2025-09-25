@@ -4,9 +4,10 @@ import { AuthService } from './auth.service';
 import { AuthLoginDto } from './dto/auth.dto.login';
 import { CreateUserDTO } from 'src/user/dto/user.dto.create';
 import { User } from 'src/user/user.entity';
+import { RefreshTokenDto } from './dto/auth.dto.refresh';
 
 // Define the expected return types
-type LoginResult = { access_token: string };
+type LoginResult = { accessToken: string; refreshToken: string };
 type RegisterResult = { message: string };
 
 type MockAuthService = {
@@ -15,6 +16,12 @@ type MockAuthService = {
     (dto: CreateUserDTO) => Promise<RegisterResult>
   >;
   validate: jest.MockedFunction<(dto: AuthLoginDto) => Promise<User | null>>;
+  refreshTokens: jest.MockedFunction<
+    (userId: number, refreshToken: string) => Promise<LoginResult>
+  >;
+  getTokens: jest.MockedFunction<
+    (user: User) => Promise<{ accessToken: string; refreshToken: string }>
+  >;
 };
 
 const mockUserService = {
@@ -30,6 +37,8 @@ describe('AuthController', () => {
       login: jest.fn(),
       register: jest.fn(),
       validate: jest.fn(),
+      refreshTokens: jest.fn(),
+      getTokens: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -66,30 +75,45 @@ describe('AuthController', () => {
     expect(authService.register).toHaveBeenCalledTimes(1);
   });
 
-  it('should call login with correct data', async () => {
-    const dto: AuthLoginDto = { username: 'admin', password: 'password123' };
-    const expectedResult = { access_token: 'test-token' };
+  it('should login and return tokens', async () => {
+    const dto = { username: 'admin', password: 'password123' };
 
     const fakeUser = {
       id: 1,
       username: 'admin',
       passwordHash: 'hashed',
       createdAt: new Date(),
-    } as unknown as User;
+    } as User;
 
-    authService.validate.mockResolvedValue({
-      id: 1,
-      username: 'admin',
-      passwordHash: 'hashed',
-      createdAt: new Date(),
-    } as unknown as User);
+    const fakeTokens: LoginResult = {
+      accessToken: 'access123',
+      refreshToken: 'refresh123',
+    };
 
-    authService.login.mockResolvedValue(expectedResult);
+    authService.validate.mockResolvedValue(fakeUser);
+    authService.login.mockResolvedValue(fakeTokens);
 
     const result = await authController.login(dto);
 
-    expect(result).toEqual(expectedResult);
     expect(authService.validate).toHaveBeenCalledWith(dto);
     expect(authService.login).toHaveBeenCalledWith(fakeUser);
+    expect(result).toEqual(fakeTokens);
+  });
+
+  it('should call refreshToken with correct data', async () => {
+    const dto: RefreshTokenDto = { id: 1, refreshToken: 'refresh123' };
+    const expectedResult: LoginResult = {
+      accessToken: 'newAccess123',
+      refreshToken: 'newRefresh123',
+    };
+
+    authService.refreshTokens.mockResolvedValue(expectedResult);
+    const result = await authController.refresh(dto);
+
+    expect(result).toEqual(expectedResult);
+    expect(authService.refreshTokens).toHaveBeenCalledWith(
+      dto.id,
+      dto.refreshToken,
+    );
   });
 });
