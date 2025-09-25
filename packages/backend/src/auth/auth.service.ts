@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/user/user.service';
+import { UserService } from 'src/user/user.service';
 import { AuthLoginDto } from './dto/auth.dto.login';
 import { User } from 'src/user/user.entity';
 import { AuthPayload } from './types/jwt';
+import { CreateUserDTO } from 'src/user/dto/user.dto.create';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private usersService: UserService,
     private jwtService: JwtService,
   ) {}
 
@@ -17,11 +18,13 @@ export class AuthService {
   }
 
   login(user: User) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const payload: AuthPayload = { id: user.id, username: user.username };
     return {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  register(data: CreateUserDTO) {
+    return this.usersService.create(data);
   }
 }
