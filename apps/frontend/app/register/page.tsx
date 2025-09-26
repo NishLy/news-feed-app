@@ -1,3 +1,5 @@
+"use client";
+
 import Navbar from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,8 +15,39 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import Link from "next/link";
 import React from "react";
+import { RegisterRequest } from "./types/register";
+import { useMutation } from "@tanstack/react-query";
+import { mutateRegister } from "./services/api";
+import { Form, Formik } from "formik";
+import * as Yup from "yup";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
+const intialValue: RegisterRequest = {
+  username: "",
+  password: "",
+};
+
+const validationSchema = Yup.object<RegisterRequest>({
+  username: Yup.string().required("Username is required"),
+  password: Yup.string()
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters"),
+});
 
 function Register() {
+  const router = useRouter();
+  const mutate = useMutation({
+    mutationFn: mutateRegister,
+    onSuccess() {
+      toast.success("User registered successfully");
+      router.push("/login");
+    },
+    onError() {
+      toast.error("Error registering user");
+    },
+  });
+
   return (
     <>
       <Navbar>
@@ -37,32 +70,44 @@ function Register() {
               </Button>
             </CardAction>
           </CardHeader>
-          <CardContent>
-            <form>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    type="text"
-                    placeholder="Enter your username"
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
+          <Formik
+            initialValues={intialValue}
+            validationSchema={validationSchema}
+            onSubmit={(values) => {
+              mutate.mutateAsync(values);
+            }}
+          >
+            <Form>
+              <CardContent>
+                <div className="flex flex-col gap-2">
+                  <div className="grid gap-2">
+                    <Label htmlFor="username">Username</Label>
+                    <Input
+                      name="username"
+                      type="text"
+                      placeholder="Enter your username"
+                      required
+                    />
                   </div>
-                  <Input id="password" type="password" required />
+                  <div className="grid gap-2">
+                    <div className="flex items-center">
+                      <Label htmlFor="password">Password</Label>
+                    </div>
+                    <Input name="password" type="password" required />
+                  </div>
                 </div>
-              </div>
-            </form>
-          </CardContent>
-          <CardFooter className="flex-col gap-2">
-            <Button type="submit" className="w-full">
-              Sign Up
-            </Button>
-          </CardFooter>
+              </CardContent>
+              <CardFooter className="flex-col gap-2 mt-6">
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={mutate.isPending}
+                >
+                  Sign Up
+                </Button>
+              </CardFooter>
+            </Form>
+          </Formik>
         </Card>
       </div>
     </>
