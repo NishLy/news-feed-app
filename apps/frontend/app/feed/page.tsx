@@ -1,9 +1,11 @@
 "use client";
 
 import Navbar from "@/components/navbar";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect, useRef } from "react";
 import { queryFeeds } from "./services/api";
+import { Card, CardContent } from "@/components/ui/card";
+import FeedCreate from "./components/create";
 
 function Feed() {
   const loaderRef = useRef<HTMLDivElement | null>(null);
@@ -13,7 +15,9 @@ function Feed() {
       queryFn: queryFeeds,
       initialPageParam: 1,
       getNextPageParam: (lastPage) => {
-        return lastPage.lastPage ? undefined : lastPage.page + 1;
+        return lastPage.lastPage < lastPage.page
+          ? undefined
+          : lastPage.page + 1;
       },
     });
 
@@ -31,20 +35,29 @@ function Feed() {
   return (
     <div className="mt-14 px-4">
       <Navbar>Feed</Navbar>
-      <ul>
+      <ul className="space-y-4 py-6 ">
         {data?.pages.map((page, pageIndex) => (
           <React.Fragment key={pageIndex}>
             {page.posts.map((feed) => (
               <li key={feed.id}>
-                <p>{feed.content}</p>
+                <Card>
+                  <CardContent>
+                    <p>{feed.content}</p>
+                  </CardContent>
+                </Card>
               </li>
             ))}
           </React.Fragment>
         ))}
       </ul>
-      <div ref={loaderRef} className="h-10" />
       {isFetchingNextPage && <p>Loading more...</p>}
-      {!hasNextPage && <p className="text-gray-500">No more items</p>}
+      {!hasNextPage && (
+        <p className="text-gray-500 text-center text-lg">No more items</p>
+      )}
+      <div ref={loaderRef} className="h-10" />
+      <div className="fixed bottom-4 right-4">
+        <FeedCreate onSuccessPost={() => {}} />
+      </div>
     </div>
   );
 }

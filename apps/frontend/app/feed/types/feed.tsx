@@ -4,3 +4,7 @@ export interface IFeed {
   content: string;
   userId: number;
 }
+
+export interface IFeedCreate {
+  content: string;
+}
