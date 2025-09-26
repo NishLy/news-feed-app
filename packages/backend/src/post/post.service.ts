@@ -26,6 +26,7 @@ export class PostService {
       skip: (page - 1) * limit,
       take: limit,
       order: { createdAt: 'DESC' },
+      relations: ['user'],
     });
 
     return {

@@ -19,10 +19,10 @@ export class User {
   @Column({ unique: true })
   username: string;
 
-  @Column()
+  @Column({ select: false })
   passwordHash: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   refreshToken?: string;
 
   @CreateDateColumn({ type: 'timestamptz' })

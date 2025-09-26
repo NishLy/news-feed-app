@@ -25,7 +25,11 @@ export class UserService {
   }
 
   async validateUser(username: string, password: string): Promise<User | null> {
-    const user = await this.usersRepo.findOne({ where: { username } });
+    const user = await this.usersRepo
+      .createQueryBuilder('user')
+      .addSelect('user.passwordHash')
+      .where('user.username = :username', { username })
+      .getOne();
     if (user && (await user.comparePassword(password))) {
       return user;
     }

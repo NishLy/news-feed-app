@@ -1,21 +1,28 @@
 "use client";
 
 import Navbar from "@/components/navbar";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useRef } from "react";
 import { queryFeeds } from "./services/api";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import FeedCreate from "./components/create";
 
 function Feed() {
+  const queryClient = useQueryClient();
   const loaderRef = useRef<HTMLDivElement | null>(null);
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
     useInfiniteQuery({
       queryKey: ["feeds", { limit: 10 }],
       queryFn: queryFeeds,
       initialPageParam: 1,
       getNextPageParam: (lastPage) => {
-        return lastPage.lastPage < lastPage.page
+        return lastPage.lastPage <= lastPage.page
           ? undefined
           : lastPage.page + 1;
       },
@@ -32,6 +39,11 @@ function Feed() {
     return () => observer.disconnect();
   }, [hasNextPage, fetchNextPage]);
 
+  const refetchFromStart = () => {
+    queryClient.removeQueries({ queryKey: ["feeds"] });
+    refetch();
+  };
+
   return (
     <div className="mt-14 px-4">
       <Navbar>Feed</Navbar>
@@ -41,8 +53,16 @@ function Feed() {
             {page.posts.map((feed) => (
               <li key={feed.id}>
                 <Card>
+                  <CardHeader>
+                    <CardTitle>@{feed.user?.username}</CardTitle>
+                    <CardDescription>
+                      {new Date(feed.createdAt).toLocaleString()}
+                    </CardDescription>
+                  </CardHeader>
                   <CardContent>
-                    <p>{feed.content}</p>
+                    <p className="whitespace-pre-wrap break-words">
+                      {feed.content}
+                    </p>
                   </CardContent>
                 </Card>
               </li>
@@ -56,7 +76,7 @@ function Feed() {
       )}
       <div ref={loaderRef} className="h-10" />
       <div className="fixed bottom-4 right-4">
-        <FeedCreate onSuccessPost={() => {}} />
+        <FeedCreate onSuccessPost={refetchFromStart} />
       </div>
     </div>
   );
