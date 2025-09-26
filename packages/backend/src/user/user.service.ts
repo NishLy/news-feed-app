@@ -36,6 +36,10 @@ export class UserService {
     return null;
   }
 
+  async findByUsername(username: string) {
+    return this.usersRepo.findOne({ where: { username } });
+  }
+
   async setRefreshToken(userId: number, refreshToken: string) {
     const user = await this.findById(userId);
     if (user) {

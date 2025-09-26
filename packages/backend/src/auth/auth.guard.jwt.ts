@@ -18,12 +18,12 @@ export class JwtAuthGuard implements CanActivate {
     const req = ctx.getRequest<Request>();
     const res = ctx.getResponse<Response>();
 
-    const authHeader = req.headers['authorization'];
+    const authHeader = req?.headers['authorization'];
     const accessToken = authHeader?.split(' ')[1];
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const refreshToken = req.cookies['refresh_token'] as string;
+    const refreshToken = req?.cookies['refresh_token'] as string;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const userId = req.cookies['user_id'] as string;
+    const userId = req?.cookies['user_id'] as string;
 
     if (accessToken) {
       const user = this.authService.validateAccessToken(accessToken);

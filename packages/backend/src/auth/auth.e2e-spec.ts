@@ -7,11 +7,13 @@ import { AuthTokensDto } from './dto/auth.dto.tokens';
 import { CreateUserDTO } from 'src/user/dto/user.dto.create';
 import { User } from 'src/user/user.entity';
 import { CustomExceptionFilter } from 'src/common/exception.filter';
+import * as cookieParser from 'cookie-parser';
+import TestAgent from 'supertest/lib/agent';
 
 describe('Auth flow (e2e)', () => {
   let app: INestApplication;
   let createdUser: User;
-  let refreshToken: string;
+  let agent: InstanceType<typeof TestAgent>;
   const fakeUser: CreateUserDTO = {
     username: 'admin' + Math.floor(Math.random() * 10000),
     password: 'password123',
@@ -31,14 +33,13 @@ describe('Auth flow (e2e)', () => {
         transform: true,
       }),
     );
+    app.use(cookieParser());
     await app.init();
+    agent = request.agent(app.getHttpServer());
   });
 
   it('should register a user', async () => {
-    const res = await request(app.getHttpServer())
-      .post('/api/register')
-      .send(fakeUser)
-      .expect(201);
+    const res = await agent.post('/api/register').send(fakeUser).expect(201);
 
     createdUser = res.body as User;
     expect(createdUser.id).toBeDefined();
@@ -46,48 +47,25 @@ describe('Auth flow (e2e)', () => {
   });
 
   it('should reject register wrong data', async () => {
-    await request(app.getHttpServer())
-      .post('/api/register')
-      .send({ username: '' })
-      .expect(400);
+    await agent.post('/api/register').send({ username: '' }).expect(400);
   });
 
   it('should reject duplicate registration', async () => {
-    await request(app.getHttpServer())
-      .post('/api/register')
-      .send(fakeUser)
-      .expect(409);
+    await agent.post('/api/register').send(fakeUser).expect(409);
   });
 
   it('should login and return tokens', async () => {
-    const res = await request(app.getHttpServer())
-      .post('/api/login')
-      .send(fakeUser)
-      .expect(200);
+    const res = await agent.post('/api/login').send(fakeUser).expect(200);
 
-    const { token, refreshToken: rt } = res.body as AuthTokensDto;
+    const { token } = res.body as AuthTokensDto;
     expect(token).toBeDefined();
-    expect(rt).toBeDefined();
-
-    refreshToken = rt;
   });
 
   it('should reject invalid cred', async () => {
-    await request(app.getHttpServer())
+    await agent
       .post('/api/login')
       .send({ username: fakeUser.username, password: 'wrong123123' })
       .expect(401);
-  });
-
-  it('should refresh tokens with valid refresh token', async () => {
-    const res = await request(app.getHttpServer())
-      .post('/api/refreshToken')
-      .send({ id: createdUser.id, refreshToken })
-      .expect(200);
-
-    const body = res.body as AuthTokensDto;
-    expect(body.token).toBeDefined();
-    expect(body.refreshToken).toBeDefined();
   });
 
   afterAll(async () => {

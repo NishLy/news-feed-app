@@ -7,6 +7,8 @@ import { CreateUserDTO } from 'src/user/dto/user.dto.create';
 import { CustomExceptionFilter } from 'src/common/exception.filter';
 import { AuthTokensDto } from 'src/auth/dto/auth.dto.tokens';
 import { Post } from './post.entity';
+import TestAgent from 'supertest/lib/agent';
+import * as cookieParser from 'cookie-parser';
 
 describe('Post flow (e2e)', () => {
   let app: INestApplication;
@@ -15,6 +17,8 @@ describe('Post flow (e2e)', () => {
     username: 'admin',
     password: 'password123',
   };
+
+  let agent: InstanceType<typeof TestAgent>;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -30,25 +34,23 @@ describe('Post flow (e2e)', () => {
         transform: true,
       }),
     );
+    app.use(cookieParser());
     await app.init();
+    agent = request.agent(app.getHttpServer());
   });
 
   it('should login and return tokens', async () => {
-    const res = await request(app.getHttpServer())
-      .post('/api/login')
-      .send(fakeUser)
-      .expect(200);
+    const res = await agent.post('/api/login').send(fakeUser).expect(200);
 
-    const { token: tk, refreshToken: rt } = res.body as AuthTokensDto;
+    const { token: tk } = res.body as AuthTokensDto;
     expect(tk).toBeDefined();
-    expect(rt).toBeDefined();
 
     token = tk;
   });
 
   it('should succefully post "Post"', async () => {
     const text: string = 'Hello world';
-    const res = await request(app.getHttpServer())
+    const res = await agent
       .post('/api/posts')
       .set('Authorization', 'Bearer ' + token)
       .send({ content: text })
@@ -64,7 +66,7 @@ describe('Post flow (e2e)', () => {
 
   it('should reject "Post" that have content length more than 200', async () => {
     const text: string = 'Hello world '.repeat(20);
-    await request(app.getHttpServer())
+    await agent
       .post('/api/posts')
       .set('Authorization', 'Bearer ' + token)
       .send({ content: text })

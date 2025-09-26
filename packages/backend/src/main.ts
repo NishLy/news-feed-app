@@ -6,10 +6,27 @@ import { ConfigService } from '@nestjs/config';
 import { CustomExceptionFilter } from './common/exception.filter';
 import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
+import { AuthService } from './auth/auth.service';
+import { UserService } from './user/user.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+
+  const authService = app.get(AuthService);
+  const userService = app.get(UserService);
+
+  const adminExists = await userService.findByUsername('Admin');
+  if (!adminExists) {
+    await authService.register({
+      username: 'admin',
+      password: 'password123',
+    });
+    console.log('✅ Admin user seeded');
+  } else {
+    console.log('⚠️ Admin already exists, skipping');
+  }
+
   app.useGlobalFilters(new CustomExceptionFilter());
 
   app.useGlobalPipes(

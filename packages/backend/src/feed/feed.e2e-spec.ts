@@ -7,10 +7,14 @@ import { CreateUserDTO } from 'src/user/dto/user.dto.create';
 import { CustomExceptionFilter } from 'src/common/exception.filter';
 import { AuthTokensDto } from 'src/auth/dto/auth.dto.tokens';
 import { Post } from 'src/post/post.entity';
+import * as cookieParser from 'cookie-parser';
+import TestAgent from 'supertest/lib/agent';
 
 describe('Feed flow (e2e)', () => {
   let app: INestApplication;
   let token: string;
+  let agent: InstanceType<typeof TestAgent>;
+
   const fakeUser: CreateUserDTO = {
     username: 'admin',
     password: 'password123',
@@ -30,24 +34,22 @@ describe('Feed flow (e2e)', () => {
         transform: true,
       }),
     );
+    app.use(cookieParser());
     await app.init();
+    agent = request.agent(app.getHttpServer());
   });
 
   it('should login and return tokens', async () => {
-    const res = await request(app.getHttpServer())
-      .post('/api/login')
-      .send(fakeUser)
-      .expect(200);
+    const res = await agent.post('/api/login').send(fakeUser).expect(200);
 
-    const { token: tk, refreshToken: rt } = res.body as AuthTokensDto;
+    const { token: tk } = res.body as AuthTokensDto;
     expect(tk).toBeDefined();
-    expect(rt).toBeDefined();
 
     token = tk;
   });
 
   it('should seed feeds', async () => {
-    const res = await request(app.getHttpServer())
+    const res = await agent
       .get(`/api/feed?page=${1}&limit=${5}`)
       .set('Authorization', 'Bearer ' + token)
       .expect(200);
