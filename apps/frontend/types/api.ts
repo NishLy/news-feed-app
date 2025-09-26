@@ -1,6 +1,9 @@
 export interface GenericSuccessResponse {
   message: string;
 }
+export interface GenericResponse {
+  message: string;
+}
 
 export interface GenericResponseWithData<T> {
   message: string;
