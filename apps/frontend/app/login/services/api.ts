@@ -3,7 +3,7 @@ import { LoginRequest } from "../types/login";
 import { MutationFunction } from "@tanstack/react-query";
 
 export interface LoginResponse {
-  accessToken: string;
+  token: string;
 }
 
 export const mutateLogin: MutationFunction<

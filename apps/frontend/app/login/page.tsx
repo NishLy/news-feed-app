@@ -49,7 +49,8 @@ function Register() {
     mutationFn: mutateLogin,
     onSuccess(data) {
       toast.success("User logged in successfully");
-      setAuth(data.accessToken);
+      console.log(data);
+      setAuth(data.token);
       router.push("/feed");
     },
     onError(data) {
