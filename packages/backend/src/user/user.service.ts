@@ -53,7 +53,11 @@ export class UserService {
   }
 
   async getRefreshToken(userId: number): Promise<string | null> {
-    const user = await this.findById(userId);
+    const user = await this.usersRepo
+      .createQueryBuilder('user')
+      .addSelect('user.refreshToken')
+      .where('user.id = :id', { id: userId })
+      .getOne();
     return user?.refreshToken ?? null;
   }
 }

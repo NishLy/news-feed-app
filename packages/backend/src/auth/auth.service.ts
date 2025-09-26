@@ -46,6 +46,17 @@ export class AuthService {
     return { token, refreshToken };
   }
 
+  validateAccessToken(token: string): AuthPayload | null {
+    try {
+      return this.jwtService.verify<AuthPayload>(token, {
+        secret: this.configService.get<string>('JWT_SECRET') ?? 'secret',
+      });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      return null; // expired or invalid
+    }
+  }
+
   async refreshTokens(userId: number, refreshToken: string) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

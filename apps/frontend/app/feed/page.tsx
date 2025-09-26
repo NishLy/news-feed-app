@@ -14,6 +14,7 @@ import {
 import FeedCreate from "./components/create";
 import Link from "next/link";
 import FollowCreate from "./components/follow-create";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function Feed() {
   const queryClient = useQueryClient();
@@ -75,8 +76,14 @@ function Feed() {
           </React.Fragment>
         ))}
       </ul>
-      {isFetchingNextPage && <p>Loading more...</p>}
-      {!hasNextPage && (
+      {isFetchingNextPage && (
+        <>
+          <Skeleton className="h-[125px] w-full rounded-md border-white/10 border-2" />
+          <Skeleton className="h-[125px] w-full rounded-md border-white/10 border-2" />
+          <Skeleton className="h-[125px] w-full rounded-md border-white/10 border-2" />
+        </>
+      )}
+      {!hasNextPage && !isFetchingNextPage && (
         <p className="text-gray-500 text-center text-lg">No more items</p>
       )}
       <div ref={loaderRef} className="h-10" />
