@@ -12,6 +12,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import FeedCreate from "./components/create";
+import Link from "next/link";
+import FollowCreate from "./components/follow-create";
 
 function Feed() {
   const queryClient = useQueryClient();
@@ -46,7 +48,10 @@ function Feed() {
 
   return (
     <div className="mt-14 px-4">
-      <Navbar>Feed</Navbar>
+      <Navbar>
+        Feeds
+        <FollowCreate />
+      </Navbar>
       <ul className="space-y-4 py-6 ">
         {data?.pages.map((page, pageIndex) => (
           <React.Fragment key={pageIndex}>
