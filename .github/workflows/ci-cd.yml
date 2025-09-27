@@ -45,6 +45,9 @@ jobs:
       - name: Lint code
         run: npm run lint
 
+      - name: Build both apps
+        run: npm run build
+
       - name: Run database migrations
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/newsfeed
@@ -54,6 +57,3 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/newsfeed
         run: npm run test
-
-      - name: Build both apps
-        run: npm run build
