@@ -40,7 +40,7 @@ jobs:
         run: npm install
 
       - name: Install Apps dependencies
-        run: npm install-deps
+        run: npm run install-deps
 
       - name: Lint code
         run: npm run lint
