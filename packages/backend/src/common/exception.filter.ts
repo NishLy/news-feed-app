@@ -5,7 +5,7 @@ import {
   HttpStatus,
   HttpException,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 
 interface DriverError extends Error {
@@ -28,8 +28,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const request = ctx.getRequest();
+    const request = ctx.getRequest<Request>();
 
     if (exception instanceof QueryFailedError) {
       this.handleDatabaseError(
@@ -49,7 +48,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
   private handleDatabaseError(
     exception: QueryFailedError,
     response: Response,
-    request: any,
+    request: Request,
   ): void {
     const driverError = exception.driverError as DriverError;
 
@@ -128,7 +127,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
   private handleHttpException(
     exception: HttpException,
     response: Response,
-    request: any,
+    request: Request,
   ): void {
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse();
@@ -154,7 +153,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
   private handleGenericError(
     exception: Error,
     response: Response,
-    request: any,
+    request: Request,
   ): void {
     console.error('Unhandled error:', exception);
 
@@ -167,7 +166,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
     });
   }
 
-  private handleUnknownError(response: Response, request: any): void {
+  private handleUnknownError(response: Response, request: Request): void {
     console.error('Unknown error type caught by exception filter');
 
     this.sendErrorResponse(response, request, {

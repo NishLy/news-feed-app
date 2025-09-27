@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import FeedCreate from "./components/create";
-import Link from "next/link";
 import FollowCreate from "./components/follow-create";
 import { Skeleton } from "@/components/ui/skeleton";
 

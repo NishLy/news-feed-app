@@ -10,7 +10,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Form, Formik, Field, ErrorMessage } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import { mutateFollow } from "../services/follow-api";
@@ -73,7 +73,7 @@ const FollowCreate = (props: Props) => {
             );
           }}
         >
-          {({ isSubmitting }) => (
+          {({}) => (
             <Form className="space-y-6 py-6">
               <Tabs
                 defaultValue={isFollow ? "follow" : "unfollow"}

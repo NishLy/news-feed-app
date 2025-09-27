@@ -33,6 +33,7 @@ services:
       - /app/node_modules
     environment:
       NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api
     depends_on:
       - backend
 

@@ -1,28 +1,27 @@
-# Use Node.js LTS
-FROM node:20-alpine
-
-# Set working directory
+# 1. Install dependencies
+FROM node:20-alpine AS deps
 WORKDIR /app
-
-# Copy root package.json & lockfile (for workspace)
-COPY ../../package.json ../../package-lock.json ./
-
-# Copy backend package.json
-COPY ./package.json ./
-
-# Install dependencies (production only)
+COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy backend source code
-COPY ./ ./  
+# 2. Build app
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 COPY .env.example .env
-
 RUN rm -rf .next
-
 RUN npm run build
 
-# Expose backend port
-EXPOSE 3000
+# 3. Run app
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
 
-# Start backend in production
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+EXPOSE 3000
 CMD ["npm", "run", "start"]

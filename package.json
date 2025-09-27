@@ -13,7 +13,10 @@
     "test": "npx concurrently \"npm run test:backend\"",
     "lint:backend": "npm --workspace=@news-feed-app/backend run lint",
     "lint:frontend": "npm --workspace=@news-feed-app/frontend run lint",
-    "lint": "npx concurrently \"npm run lint:backend\" \"npm run lint:frontend\""
+    "lint": "npx concurrently \"npm run lint:backend\" \"npm run lint:frontend\"",
+    "ci:backend": "npm --workspace=@news-feed-app/backend ci",
+    "ci:frontend": "npm --workspace=@news-feed-app/frontend ci",
+    "ci": "npx concurrently \"npm run ci:backend\" \"npm run ci:frontend\""
   },
   "workspaces": [
     "packages/*"
