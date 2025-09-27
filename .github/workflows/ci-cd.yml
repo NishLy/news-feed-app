@@ -43,6 +43,9 @@ jobs:
       - name: Pin LightningCSS (fix missing .node in CI)
         run: npm install lightningcss@1.27.0 --workspace=@news-feed-app/frontend
 
+      - name: Install TailwindCSS Oxide binary
+        run: npm install @tailwindcss/oxide-linux-x64-gnu --workspace=@news-feed-app/frontend
+
       - name: Lint code
         run: npm run lint
 
