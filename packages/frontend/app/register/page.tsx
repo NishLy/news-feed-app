@@ -22,7 +22,7 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { GenericResponse, GenericSuccessResponse } from "@/types/api";
+import { GenericSuccessResponse } from "@/types/api";
 import { AxiosError } from "axios";
 
 const intialValue: RegisterRequest = {

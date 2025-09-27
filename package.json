@@ -17,7 +17,7 @@
     "install:backend": "npm --workspace=@news-feed-app/backend install",
     "install:frontend": "npm --workspace=@news-feed-app/frontend install",
     "install-deps": "npx concurrently \"npm run install:backend\" \"npm run install:frontend\"",
-    "migration": "npm --workspace=@news-feed-app/backend run migration:run"
+    "migrate": "npm --workspace=@news-feed-app/backend run migration:run"
   },
   "workspaces": [
     "packages/*"
