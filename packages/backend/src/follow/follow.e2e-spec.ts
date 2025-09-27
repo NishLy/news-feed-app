@@ -13,7 +13,7 @@ describe('Follow flow (e2e)', () => {
   let app: INestApplication;
   let token: string;
   let agent: InstanceType<typeof TestAgent>;
-  const targetUserId = 4;
+  const targetUserId = 2;
   const fakeUser: CreateUserDTO = {
     username: 'admin',
     password: 'password123',

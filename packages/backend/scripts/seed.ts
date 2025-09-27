@@ -11,6 +11,8 @@ async function seed() {
   const authService = app.get(AuthService);
 
   const adminExists = await userService.findByUsername('admin');
+  const adminExists1 = await userService.findByUsername('admin1');
+  const adminExists2 = await userService.findByUsername('admin2');
 
   if (!adminExists) {
     await authService.register({
@@ -21,6 +23,18 @@ async function seed() {
   } else {
     console.log('⚠️ Admin already exists, skipping');
   }
+
+  if (!adminExists1)
+    await authService.register({
+      username: 'admin1',
+      password: 'password123',
+    });
+
+  if (!adminExists2)
+    await authService.register({
+      username: 'admin2',
+      password: 'password123',
+    });
 
   await app.close();
 }
