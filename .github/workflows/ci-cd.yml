@@ -35,12 +35,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+          cache: "npm"
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install dependencies (root + workspaces)
+        run: npm install --workspaces
 
-      - name: Install Apps dependencies
-        run: npm run install-deps
+      - name: Pin LightningCSS (fix missing .node in CI)
+        run: npm install lightningcss@1.27.0 --workspace=@news-feed-app/frontend
 
       - name: Lint code
         run: npm run lint
@@ -51,7 +52,7 @@ jobs:
       - name: Run database migrations
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/newsfeed
-        run: npm run migrate
+        run: npm run migration
 
       - name: Run e2e tests
         env:
