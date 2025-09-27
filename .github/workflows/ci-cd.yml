@@ -42,9 +42,6 @@ jobs:
       - name: Install Apps dependencies
         run: npm run install-deps
 
-      - name: Install ligthingCss specific binaries
-        run: npm install @parcel/css-linux-x64-gnu --workspace=@news-feed-app/frontend
-
       - name: Lint code
         run: npm run lint
 
