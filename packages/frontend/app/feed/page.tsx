@@ -14,6 +14,7 @@ import {
 import FeedCreate from "./components/create";
 import FollowCreate from "./components/follow-create";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getRelativeTime } from "@/lib/time";
 
 function Feed() {
   const queryClient = useQueryClient();
@@ -61,7 +62,7 @@ function Feed() {
                   <CardHeader>
                     <CardTitle>@{feed.user?.username}</CardTitle>
                     <CardDescription>
-                      {new Date(feed.createdAt).toLocaleString()}
+                      {getRelativeTime(feed.createdAt)}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>

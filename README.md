@@ -4,6 +4,19 @@ This is a monorepo for the **News Feed App**, containing both the backend (NestJ
 
 ---
 
+## Features
+
+| Feature                | Description                                                                                                                                                                                           | Status    |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| User Management        | Allows users to create an account with a unique username and password. Users can also log in to receive a session token and refresh token (JWT) for authentication.                                   | Developed |
+| Post Creation          | Authenticated users can create text-based posts with a maximum length of 200 characters. Each post stores a unique ID, the user's ID, the content, and a creation timestamp.                          | Developed |
+| Follow/Unfollow System | Users have the ability to follow and unfollow other users. A user cannot follow themselves. This relationship is stored in the database.                                                              | Developed |
+| News Feed              | Logged-in users can view a news feed that displays posts from all the users they follow. The feed is sorted chronologically, showing the newest posts first, and includes infinite scroll pagination. | Developed |
+| UI/UX Enhancements     | The user interface includes real-time character counters, relative time for posts, instant UI updates for new posts and follow/unfollow actions without page reloads, and clear error messaging.      | Developed |
+| API & Database         | A RESTful API is built with Node.js/Nest to handle all functionalities, including user actions and data retrieval. It uses a PostgreSQL database with a defined schema for users, posts, and follows. | Developed |
+
+---
+
 ## Getting Started
 
 ### 1. Install Dependencies
