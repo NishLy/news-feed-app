@@ -1,4 +1,11 @@
-import { Controller, Request, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Request,
+  Post,
+  Body,
+  UseGuards,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreatePostDto } from './dto/post.dto.create';
 import { PostService } from './post.service';
 import { AuthPayload } from 'src/auth/types/jwt';
@@ -22,6 +29,7 @@ export class PostController {
     },
   })
   @ApiResponse({ status: 400, description: 'Validation failed.' })
+  @ApiResponse({ status: 422, description: 'Unprocessable enitity' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('posts')
@@ -29,6 +37,10 @@ export class PostController {
     @Body() createPostDto: CreatePostDto,
     @Request() req: Request & { user: AuthPayload },
   ) {
+    if (createPostDto.content.length >= 200)
+      throw new UnprocessableEntityException(
+        'Content cannot more than 200 characters',
+      );
     return this.postService.create(req.user.id, createPostDto);
   }
 }

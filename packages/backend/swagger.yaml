@@ -32,6 +32,8 @@ paths:
                 createdAt: 2025-09-27T05:10:38.252Z
         "400":
           description: Validation failed.
+        "422":
+          description: Unprocessable enitity
       security:
         - bearer: []
       tags:

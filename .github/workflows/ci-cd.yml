@@ -55,7 +55,7 @@ jobs:
       - name: Run database migrations
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/newsfeed
-        run: npm run migration
+        run: npm run migrate
 
       - name: Run e2e tests
         env:
