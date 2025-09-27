@@ -9,6 +9,8 @@ import * as cookieParser from 'cookie-parser';
 import { AuthService } from './auth/auth.service';
 import { UserService } from './user/user.service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as YAML from 'yaml';
+import { writeFileSync } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -36,6 +38,8 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+  const yamlString = YAML.stringify(document);
+  writeFileSync('./swagger.yaml', yamlString);
   SwaggerModule.setup('api-docs', app, document);
 
   app.useGlobalFilters(new CustomExceptionFilter());

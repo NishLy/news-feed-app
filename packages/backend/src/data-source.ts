@@ -8,14 +8,6 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASS || 'postgres',
   database: process.env.DB_NAME || 'newsfeed',
-  entities: [
-    process.env.NODE_ENV === 'production'
-      ? 'dist/**/*.entity.js'
-      : 'src/**/*.entity.ts',
-  ],
-  migrations: [
-    process.env.NODE_ENV === 'production'
-      ? 'dist/migrations/*.js'
-      : 'src/migrations/*.ts',
-  ],
+  entities: ['dist/**/*.entity.js'],
+  migrations: ['dist/migrations/*.js'],
 });

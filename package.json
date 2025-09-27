@@ -6,7 +6,7 @@
     "dev:backend": "npm --workspace=@news-feed-app/backend run start:dev",
     "dev:frontend": "npm --workspace=@news-feed-app/frontend run dev",
     "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "build:backend": "npm --workspace=@news-feed-app/backend run start:build",
+    "build:backend": "npm --workspace=@news-feed-app/backend run build",
     "build:frontend": "npm --workspace=@news-feed-app/frontend run build",
     "build": "npx concurrently \"npm run build:backend\" \"npm run build:frontend\"",
     "test:backend": "npm --workspace=@news-feed-app/backend run test",
@@ -14,9 +14,10 @@
     "lint:backend": "npm --workspace=@news-feed-app/backend run lint",
     "lint:frontend": "npm --workspace=@news-feed-app/frontend run lint",
     "lint": "npx concurrently \"npm run lint:backend\" \"npm run lint:frontend\"",
-    "ci:backend": "npm --workspace=@news-feed-app/backend ci",
-    "ci:frontend": "npm --workspace=@news-feed-app/frontend ci",
-    "ci": "npx concurrently \"npm run ci:backend\" \"npm run ci:frontend\""
+    "install:backend": "npm --workspace=@news-feed-app/backend install",
+    "install:frontend": "npm --workspace=@news-feed-app/frontend install",
+    "install-deps": "npx concurrently \"npm run install:backend\" \"npm run install:frontend\"",
+    "migration": "npm --workspace=@news-feed-app/backend run migration:run"
   },
   "workspaces": [
     "packages/*"

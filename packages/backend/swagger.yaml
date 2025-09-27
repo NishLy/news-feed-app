@@ -1,0 +1,286 @@
+openapi: 3.0.0
+paths:
+  /:
+    get:
+      operationId: AppController_getHello
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      tags:
+        - App
+  /api/posts:
+    post:
+      operationId: PostController_createPost
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePostDto"
+      responses:
+        "201":
+          description: Success create a post
+          content:
+            application/json:
+              example:
+                id: 1
+                user:
+                  id: 1
+                content: Hello World
+                createdAt: 2025-09-27T05:10:38.252Z
+        "400":
+          description: Validation failed.
+      security:
+        - bearer: []
+      tags:
+        - Post
+  /api/login:
+    post:
+      operationId: AuthController_login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthLoginDto"
+      responses:
+        "200":
+          description: To login user
+          content:
+            application/json:
+              example:
+                token: exmpletoken
+        "400":
+          description: Validation failed.
+        "401":
+          description: Invalid credentials.
+      tags: &a1
+        - Auth
+  /api/register:
+    post:
+      operationId: AuthController_register
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserDTO"
+      responses:
+        "201":
+          description: To register new user
+          content:
+            application/json:
+              example:
+                id: 3
+                username: admin12223
+                passwordHash: $2b$10$4Q4Ztx4FH6rxd.ovxHOaROHsXHuoKq1XEarYmoqPzpSIu1Incpzf2
+                refreshToken: null
+                createdAt: 2025-09-27T05:19:04.656Z
+        "400":
+          description: Validation failed.
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              example:
+                statusCode: 409
+                message: Username already exists
+                error: ConflictException
+                timestamp: 2025-09-27T05:17:08.841Z
+                path: /api/register
+      tags: *a1
+  /api/refreshToken:
+    post:
+      operationId: AuthController_refresh
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshTokenDto"
+      responses:
+        "200":
+          description: To refresh token
+          content:
+            application/json:
+              example:
+                token: exmpletoken
+        "401":
+          description: Invalid credentials.
+      tags: *a1
+  /api/follow/{followeeId}:
+    post:
+      operationId: FollowController_follow
+      parameters:
+        - name: followeeId
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Success create a follow
+          content:
+            application/json:
+              example:
+                message: you are now following user 2
+        "400":
+          description: Validation failed.
+        "404":
+          description: User not Found
+          content:
+            application/json:
+              example:
+                statusCode: 404
+                message: User not found
+                error: NotFoundException
+                timestamp: 2025-09-27T05:13:56.002Z
+                path: /api/follow/2
+      security:
+        - bearer: []
+      tags: &a2
+        - Follow
+    delete:
+      operationId: FollowController_unfollow
+      parameters:
+        - name: followeeId
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Success delete a follow
+          content:
+            application/json:
+              example:
+                message: you unfollowed user 2
+        "400":
+          description: Validation failed.
+        "404":
+          description: User not Found
+          content:
+            application/json:
+              example:
+                statusCode: 404
+                message: User not found
+                error: NotFoundException
+                timestamp: 2025-09-27T05:13:56.002Z
+                path: /api/follow/2
+      security:
+        - bearer: []
+      tags: *a2
+  /api/feed:
+    get:
+      operationId: FeedController_getPosts
+      parameters:
+        - name: page
+          required: false
+          in: query
+          description: Page number of data
+          schema:
+            example: 1
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Limit number of data returned
+          schema:
+            example: 10
+            type: number
+      responses:
+        "200":
+          description: Get feeds
+          content:
+            application/json:
+              example:
+                posts:
+                  - id: 2
+                    user:
+                      id: 1
+                      username: admin
+                      createdAt: 2025-09-27T04:35:10.397Z
+                    content: Hello World
+                    createdAt: 2025-09-27T05:11:21.696Z
+                  - id: 1
+                    user:
+                      id: 1
+                      username: admin
+                      createdAt: 2025-09-27T04:35:10.397Z
+                    content: Hello World
+                    createdAt: 2025-09-27T05:10:38.252Z
+                total: 6
+                page: 1
+                lastPage: 1
+      security:
+        - bearer: []
+      tags:
+        - Feed
+info:
+  title: NewsFeed API
+  description: API documentation for NewsFeedApp
+  version: "1.0"
+  contact: {}
+tags: []
+servers: []
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    CreatePostDto:
+      type: object
+      properties:
+        content:
+          type: string
+          example: Hello World
+          description: The content of post
+      required:
+        - content
+    AuthLoginDto:
+      type: object
+      properties:
+        username:
+          type: string
+          example: admin
+          description: The username of the user
+        password:
+          type: string
+          example: password123
+          description: The password of the user
+      required:
+        - username
+        - password
+    CreateUserDTO:
+      type: object
+      properties:
+        username:
+          type: string
+          example: admin123
+          description: The username of the user
+        password:
+          type: string
+          example: password123
+          description: The password of the user
+      required:
+        - username
+        - password
+    RefreshTokenDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: The id of user
+        refreshToken:
+          type: string
+          description: Refresh token for user
+      required:
+        - id
+        - refreshToken
