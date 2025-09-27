@@ -61,12 +61,12 @@ jobs:
           done
           echo "Postgres did not start in time" && exit 1
         env:
-          DB_HOST: postgres
+          DB_HOST: localhost
           DB_PORT: 5432
 
       - name: Run database migrations
         env:
-          DB_HOST: postgres
+          DB_HOST: localhost
           DB_USER: postgres
           DB_PASS: postgres
           DB_NAME: newsfeed
@@ -75,7 +75,7 @@ jobs:
 
       - name: Run e2e tests
         env:
-          DB_HOST: postgres
+          DB_HOST: localhost
           DB_USER: postgres
           DB_PASS: postgres
           DB_NAME: newsfeed
