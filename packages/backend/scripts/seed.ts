@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from 'src/app.module';
 import { AuthService } from 'src/auth/auth.service';
