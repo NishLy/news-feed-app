@@ -8,6 +8,7 @@ import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import { AuthService } from './auth/auth.service';
 import { UserService } from './user/user.service';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,6 +27,16 @@ async function bootstrap() {
   } else {
     console.log('⚠️ Admin already exists, skipping');
   }
+
+  const config = new DocumentBuilder()
+    .setTitle('NewsFeed API')
+    .setDescription('API documentation for NewsFeedApp')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api-docs', app, document);
 
   app.useGlobalFilters(new CustomExceptionFilter());
 

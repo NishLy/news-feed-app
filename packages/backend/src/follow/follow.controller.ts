@@ -14,11 +14,32 @@ import {
 import { AuthPayload } from 'src/auth/types/jwt';
 import { JwtAuthGuard } from 'src/auth/auth.guard.jwt';
 import { FollowService } from './follow.service';
+import { ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('api')
 export class FollowController {
   constructor(private followsService: FollowService) {}
 
+  @ApiResponse({
+    status: 200,
+    description: 'Success create a follow',
+    example: {
+      message: 'you are now following user 2',
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not Found',
+    example: {
+      statusCode: 404,
+      message: 'User not found',
+      error: 'NotFoundException',
+      timestamp: '2025-09-27T05:13:56.002Z',
+      path: '/api/follow/2',
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Validation failed.' })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('follow/:followeeId')
@@ -32,6 +53,26 @@ export class FollowController {
     return { message: `you are now following user ${followeeId}` };
   }
 
+  @ApiResponse({
+    status: 200,
+    description: 'Success delete a follow',
+    example: {
+      message: 'you unfollowed user 2',
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not Found',
+    example: {
+      statusCode: 404,
+      message: 'User not found',
+      error: 'NotFoundException',
+      timestamp: '2025-09-27T05:13:56.002Z',
+      path: '/api/follow/2',
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Validation failed.' })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('follow/:followeeId')
