@@ -24,8 +24,8 @@ export class AuthService {
     return this.getTokens(user);
   }
 
-  register(data: CreateUserDTO) {
-    return this.usersService.create(data);
+  async register(data: CreateUserDTO) {
+    return await this.usersService.create(data);
   }
 
   async getTokens(user: User): Promise<AuthTokensDto> {

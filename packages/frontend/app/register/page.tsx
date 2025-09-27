@@ -22,6 +22,8 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { GenericResponse, GenericSuccessResponse } from "@/types/api";
+import { AxiosError } from "axios";
 
 const intialValue: RegisterRequest = {
   username: "",
@@ -37,14 +39,18 @@ const validationSchema = Yup.object<RegisterRequest>({
 
 function Register() {
   const router = useRouter();
-  const mutate = useMutation({
+  const mutate = useMutation<
+    GenericSuccessResponse,
+    AxiosError<GenericSuccessResponse>,
+    RegisterRequest
+  >({
     mutationFn: mutateRegister,
     onSuccess() {
       toast.success("User registered successfully");
       router.push("/login");
     },
-    onError() {
-      toast.error("Error registering user");
+    onError(data) {
+      toast.error(data.response?.data.message || "Something went wrong");
     },
   });
 
