@@ -30,7 +30,7 @@ import { FeedModule } from './feed/feed.module';
         password: config.get<string>('DB_PASS'),
         database: config.get<string>('DB_NAME'),
         entities: [User, Post, Follow],
-        synchronize: true,
+        synchronize: process.env.NODE_ENV !== 'production',
       }),
     }),
     UserModule,

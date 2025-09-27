@@ -8,9 +8,6 @@ services:
     container_name: newsfeed-backend
     ports:
       - "4000:4000"
-    volumes:
-      - ./packages/backend:/app
-      - /app/node_modules
     environment:
       NODE_ENV: production
       DB_HOST: postgres
@@ -28,9 +25,6 @@ services:
     container_name: newsfeed-frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./packages/frontend:/app
-      - /app/node_modules
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_API_URL: http://localhost:4000/api
