@@ -70,6 +70,6 @@ describe('Post flow (e2e)', () => {
       .post('/api/posts')
       .set('Authorization', 'Bearer ' + token)
       .send({ content: text })
-      .expect(400);
+      .expect(422);
   });
 });
