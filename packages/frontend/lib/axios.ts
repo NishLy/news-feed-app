@@ -21,7 +21,10 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       authStore.getState().clearAuth();
-      if (typeof window !== "undefined") {
+      if (
+        typeof window !== "undefined" &&
+        window.location.pathname !== "/login"
+      ) {
         window.location.href = "/login";
       }
     }
