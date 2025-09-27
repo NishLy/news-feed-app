@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Post } from 'src/post/post.entity';
 import {
   Entity,
@@ -37,7 +35,6 @@ export class User {
   }
 
   async comparePassword(plain: string): Promise<boolean> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await bcrypt.compare(plain, this.passwordHash);
   }
 }

@@ -1,21 +1,28 @@
-# Stage 1: Build
-FROM node:20-bullseye AS builder
+# Use Node.js LTS
+FROM node:20-alpine
+
+# Set working directory
 WORKDIR /app
 
-COPY package*.json ./
+# Copy root package.json & lockfile (for workspace)
+COPY ../../package.json ../../package-lock.json ./
+
+# Copy backend package.json
+COPY ./package.json ./
+
+# Install dependencies (production only)
 RUN npm ci
 
-COPY . .
+# Copy backend source code
+COPY ./ ./  
+COPY .env.example .env
+
+RUN rm -rf .next
+
 RUN npm run build
 
-# Stage 2: Production image
-FROM node:20-bullseye AS runner
-WORKDIR /app
-
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-RUN npm ci --omit=dev
-
+# Expose backend port
 EXPOSE 3000
-CMD ["npm", "start"]
+
+# Start backend in production
+CMD ["npm", "run", "start"]

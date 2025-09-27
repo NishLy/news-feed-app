@@ -16,7 +16,7 @@ async function bootstrap() {
   const authService = app.get(AuthService);
   const userService = app.get(UserService);
 
-  const adminExists = await userService.findByUsername('Admin');
+  const adminExists = await userService.findByUsername('admin');
   if (!adminExists) {
     await authService.register({
       username: 'admin',

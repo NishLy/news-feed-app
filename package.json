@@ -5,7 +5,15 @@
   "scripts": {
     "dev:backend": "npm --workspace=@news-feed-app/backend run start:dev",
     "dev:frontend": "npm --workspace=@news-feed-app/frontend run dev",
-    "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+    "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:backend": "npm --workspace=@news-feed-app/backend run start:build",
+    "build:frontend": "npm --workspace=@news-feed-app/frontend run build",
+    "build": "npx concurrently \"npm run build:backend\" \"npm run build:frontend\"",
+    "test:backend": "npm --workspace=@news-feed-app/backend run test",
+    "test": "npx concurrently \"npm run test:backend\"",
+    "lint:backend": "npm --workspace=@news-feed-app/backend run lint",
+    "lint:frontend": "npm --workspace=@news-feed-app/frontend run lint",
+    "lint": "npx concurrently \"npm run lint:backend\" \"npm run lint:frontend\""
   },
   "workspaces": [
     "packages/*"

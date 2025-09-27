@@ -12,7 +12,6 @@ import { Request, Response } from 'express';
 export class JwtAuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = context.switchToHttp();
     const req = ctx.getRequest<Request>();

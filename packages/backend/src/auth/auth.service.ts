@@ -59,7 +59,6 @@ export class AuthService {
 
   async refreshTokens(userId: number, refreshToken: string) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const payload: AuthPayload = await this.jwtService.verifyAsync(
         refreshToken,
         {

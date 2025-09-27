@@ -17,7 +17,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   // It then calls this method with the decoded payload.
   validate(payload: AuthPayload) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     return { id: payload.id, username: payload.username };
   }
 }
